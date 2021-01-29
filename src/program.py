@@ -1,5 +1,7 @@
 import smtplib
 import ssl
+import schedule
+import time
 
 from decouple import config
 from selenium import webdriver
@@ -46,3 +48,17 @@ context = ssl.create_default_context()
 with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
     server.login(sender_email, pwdStr)
     server.sendmail(sender_email, receiver_email, message)
+
+
+### Todo: Schedule a job execution
+# https://schedule.readthedocs.io/en/stable/
+def job():
+    print("Yooo I'm fine!")
+
+
+schedule.every(10).seconds.do(job)
+schedule.every().day.at("8:01").do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
