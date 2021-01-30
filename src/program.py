@@ -16,6 +16,7 @@ pwdStr = config("$pwd")
 
 def init():
     print("Time to start!")
+    open_browser()
     schedule_job()
 
 
@@ -40,16 +41,42 @@ def open_browser():
 
 
 def save_page_content(browser):
+    file = open("data.html", "a")
+    today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    content = "<h2>{}</h2>".format(today)
+    file.write(content)
+
+    browser.implicitly_wait(10)
+
+    # Get fixed slot
+    print(" \n I'm going to collect fixed slots data \n")
+    go_through_content(browser, file)
+    time.sleep(10)
+
+    # Change type of slots
+    change_slot_type_xpath = "//*[@class='group-selector--container']//*[@class='group-selector--list-item'][2]//a"
+    change_slot_type = browser.find_element(By.XPATH, change_slot_type_xpath)
+    print("Changed slot: ", change_slot_type.get_attribute("innerHTML"))
+    change_slot_type.click()
+    time.sleep(10)
+
+    # Get flexi saver slot
+    print("\n I'm going to collect flexi slots  \n")
+    go_through_content(browser, file)
+
+    file.close()
+    print("I'm going to wait before I close the window")
+    time.sleep(20)
+
+
+def go_through_content(browser, file):
     # Find slots
     format_xpath = "//*[@id='slot-matrix']//ul[@class='tabs-header-container']/li"
-    browser.implicitly_wait(10)
     print("I'm done waiting")
 
     slots = browser.find_elements(By.XPATH, format_xpath)
     print("List has: " + str(len(slots)) + " elements");
 
-    today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    file = open("data.html", "a")
     i = 1
 
     for slot in slots:
@@ -68,17 +95,13 @@ def save_page_content(browser):
         content_tab = browser.find_element_by_class_name("slot-selector--tab-content")
         content_tab_html = content_tab.get_attribute("innerHTML")
 
-        content = "<div><h2>{}</2>{}<hr />".format(today, content_tab_html)
+        content = "{}<hr />".format(content_tab_html)
 
         browser.implicitly_wait(10)
         print("I'm done with slot: ", i)
         i += 1
         file.write(content)
-
-    file.close()
-    print("I'm going to wait before I close the window")
-    time.sleep(60)
-
+    print("Go through content is done")
 
 # Send Email
 
@@ -109,8 +132,9 @@ def schedule_job():
     print("I'm scheduling a job")
 
     def job():
-        print("Yooo I'm fine!")
+        print("#### Job started ####")
         open_browser()
+        print("#### Job finished ####")
 
     schedule.every(1).hour.do(job)
 
