@@ -49,7 +49,7 @@ def save_page_content(browser):
     print("List has: " + str(len(slots)) + " elements");
 
     today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    file = open("data.txt", "a")
+    file = open("data.html", "a")
     i = 1
 
     for slot in slots:
@@ -68,12 +68,12 @@ def save_page_content(browser):
         content_tab = browser.find_element_by_class_name("slot-selector--tab-content")
         content_tab_html = content_tab.get_attribute("innerHTML")
 
-        text = "\n {} \n \n HTML: \n {}\n\n".format(today, content_tab_html)
+        content = "<div><h2>{}</2>{}<hr />".format(today, content_tab_html)
 
         browser.implicitly_wait(10)
         print("I'm done with slot: ", i)
         i += 1
-        file.write(text)
+        file.write(content)
 
     file.close()
     print("I'm going to wait before I close the window")
