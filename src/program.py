@@ -8,7 +8,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from datetime import datetime
 
 emailStr = config("$email")
 pwdStr = config("$pwd")
@@ -55,7 +54,7 @@ def go_through_slots(browser):
     try:
         clickable_slot = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, last_tab_xpath)))
         clickable_slot.click()
-        time.sleep(10)
+        time.sleep(2)
     except:
         print("I didn't have what to click")
 
@@ -66,7 +65,6 @@ def go_through_slots(browser):
     for slot in available_times:
         book(slot, browser)
 
-    # file.close()
     print("I'm going to wait before I close the window")
     time.sleep(20)
 
@@ -77,7 +75,6 @@ def get_slot_path(slot):
 
 def book(slot, browser):
     preferred_slot_xpath = get_slot_path(slot)
-    print(preferred_slot_xpath)
     preferred_slot = None
 
     try:
@@ -124,7 +121,7 @@ def schedule_job():
         open_browser()
         print("#### Job finished ####")
 
-    schedule.every(1).hour.do(job)
+    schedule.every(15).minutes.do(job)
 
     while True:
         schedule.run_pending()
